@@ -1,0 +1,88 @@
+/* 무미류 파운드리 — 값 파일
+   색·여백·글자 크기는 여기 있는 변수만 쓴다. 값을 직접 적지 않는다.
+   왜 이 값인지: design/references.md 카드마다 '4단계 결과' (2026-10-12~15). */
+
+/* ── 글꼴 파일 ── SUIT 2.0.5, OFL 1.1 (fonts/SUIT-LICENSE.txt) */
+@font-face {
+  font-family: 'SUIT Variable';
+  src: url('../fonts/SUIT-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+}
+/* 숫자 0–9만 Whois Mono 400 — 파일은 라이선스를 확인한 뒤에 넣는다. 그 전엔 숫자도 SUIT로 보인다 */
+
+:root {
+  /* ── 색: 두 색 한 쌍 (R03·R04) ──
+     공통 페이지(홈·정보·연락)는 검정·흰색 한 쌍. 서체 페이지는 아래 [data-face]가 바꿔 끼운다. */
+  --dark: #000000;
+  --light: #ffffff;
+
+  /* ── 글자 (R01) ── SUIT + 숫자만 Whois. 본문 16px에서 1.3배씩, 정수로 반올림 */
+  --font-ui: 'Whois Digits', 'SUIT Variable', sans-serif;
+  --text-xs: 9px;
+  --text-s: 12px;
+  --text-m: 16px;
+  --text-l: 21px;
+  /* 자리마다 쓰는 단계 — 폰에서는 한 단계씩 아래 (R06, 아래 폭 구분점) */
+  --text-label: var(--text-s);
+  --text-body: var(--text-m);
+  --text-big: var(--text-l);
+  --leading-body: 1.5;
+  --leading-big: 1.35;
+  --leading-spec: 1;        /* 견본 글자(맨 위 견본 · 써 보기 처음 값) — 위아래 여유 없이 */
+  --tracking: 0;
+  --weight-body: 400;
+  --weight-name: 700;   /* 사이트 이름 '무미류 moomiryu'만 */
+
+  /* ── 견본 크기 (R02) ── */
+  --spec-hero-max: 55svh;   /* 맨 위 견본: 폭에 꽉 맞추되 첫 화면 높이의 55%까지 (임시값) */
+  --spec-tester: 12vw;      /* 써 보기 처음 크기: 폭의 12% — 써 보기 칸은 이름표 없이 전체 폭 */
+
+  /* ── 여백 (R05) ── 단위 8px의 배수만 쓴다 */
+  --space-1: 8px;
+  --space-2: 16px;          /* 줄 위아래 · 단 사이 */
+  --space-3: 24px;
+  --edge: var(--space-3);   /* 화면 가장자리 — 폰·태블릿 24px, PC는 아래 폭 구분점에서 폭의 8.5% */
+  --gap-section: calc(var(--space-1) * 30);   /* 큰 구간 사이 240px — 구획은 선이 아니라 이 여백이 맡는다 (Klim 방식, 2026-10-15) */
+
+  /* ── 격자 (R07) ── PC 14단, 왼쪽 2단이 이름표. 1100 아래는 한 단으로 쌓는다 */
+  --cols: 14;
+  --cols-label: 2;
+
+  /* ── 선 (R09) ── 구획선은 쓰지 않는다(2026-10-15) — 선은 누르는 것(단추)·조절 막대에만.
+     모서리는 각. 둥근 것이 필요해지면 그때 묻는다 */
+  --line-thin: 1px;
+}
+
+/* ── 색이 칠해지는 자리 ──
+   전등이 꺼지면(처음) 어두운 색이 바탕, 켜면 <html data-lamp="on"> 둘이 자리를 바꾼다.
+   흐린 글자 = 글자색 85%. 선 = 글자색. 누를 곳은 강조색 없이 두 색을 뒤집는다(바탕 --ink, 글자 --bg). */
+:root, [data-face] {
+  --mute-mix: 85%;         /* 흐린 글자 = 글자색을 이만큼, 나머지는 바탕색 */
+  --bg: var(--dark);
+  --ink: var(--light);
+  --mute: color-mix(in srgb, var(--ink) var(--mute-mix), var(--bg));
+  --line: var(--ink);
+  --tint: color-mix(in srgb, var(--ink) 8%, var(--bg));   /* 옅은 바탕 — 선 대신 칸을 가를 때(글리프 칸) */
+}
+[data-lamp="on"], [data-lamp="on"] [data-face] {
+  --bg: var(--light);
+  --ink: var(--dark);
+}
+
+/* ── 서체마다 바꿔 끼우는 칸 (R03) ── 하나는 어둡게, 하나는 밝게 고른다 */
+[data-face="shoot"] { --dark: #5a5580; --light: #ffffff; }
+
+/* ── 폭 구분점 (R08): 폰 ~599 / 태블릿 600~1099 / PC 1100~ ──
+   변수는 미디어 쿼리 안에 못 쓰니 이 두 숫자는 그대로 적는다. 이름표 단은 1100부터. */
+@media (max-width: 599px) {
+  :root {
+    --text-label: var(--text-xs);
+    --text-body: var(--text-s);
+    --text-big: var(--text-m);
+  }
+}
+/* PC 가장자리 = 폭의 8.5% (Grilli 식, 2026-10-22) — 24px이면 견본이 화면 끝에 닿아 꽉 차 보였다. 8px 배수가 아닌 유일한 여백 */
+@media (min-width: 1100px) {
+  :root { --edge: 8.5vw; }
+}

@@ -1,0 +1,211 @@
+/* 공통 틀 — 서체 페이지마다 다시 쓴다. 값은 styles/tokens.css의 변수만 쓴다 */
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking);
+  font-weight: var(--weight-body);
+}
+a { color: inherit; text-decoration: none; }
+.page { padding: 0 var(--edge); }
+
+/* 위 막대 */
+.bar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+.bar-name { font-weight: var(--weight-name); }
+.bar-links { display: flex; gap: var(--space-2); }
+
+/* 맨 위 그림 (Klim 식) — 첫 화면에서 위 막대를 뺀 나머지를 채운다.
+   사진은 자르지 않고 가운데에, 가장자리는 바탕으로 녹인다(사진 바탕과 페이지 바탕이 아주 조금 달라서) */
+.first { display: flex; flex-direction: column; height: 100svh; }
+.media { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.media img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  --fade: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
+          linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: var(--fade);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--fade);
+  mask-composite: intersect;
+}
+.media img[hidden] { display: none; }
+
+/* 맨 위 견본 (R02) — 폭에 꽉 맞추되 첫 화면 높이 한도까지. 스크립트 없이 CSS만.
+   서체 페이지가 정하는 것: --face-font(서체), --hero-em(고른 낱말 폭 ÷ 글자 크기, 양옆 여유 포함 —
+   낱말을 바꾸면 다시 잰다), --face-pad-l/-r(기운 획이 잘리지 않게 양옆 여유) */
+.hero {
+  container-type: inline-size;
+  padding: calc(var(--gap-section) / 2) 0;
+}
+.hero-word {
+  display: block;
+  font-family: var(--face-font);
+  font-size: min(calc(100cqw / var(--hero-em)), var(--spec-hero-max));
+  line-height: var(--leading-spec);
+  white-space: nowrap;
+  padding: 0 var(--face-pad-r, 0) 0 var(--face-pad-l, 0);
+}
+
+/* 이름표 — 흐린 글자, 이름표 크기 */
+.label { font-size: var(--text-label); color: var(--mute); }
+
+/* 누르는 것 — 글자와 선으로. 켜진 것은 두 색을 뒤집는다 */
+.chip {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: var(--line-thin) solid var(--line);
+  border-radius: 0;
+  padding: var(--space-1);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"], .chip.is-primary { background: var(--ink); color: var(--bg); }
+.chip .tag { color: var(--mute); }
+.chip[aria-pressed="true"] .tag { color: inherit; }
+:is(.chip, .tester-icon, .tester-ctl input):focus-visible { outline: var(--line-thin) solid var(--ink); outline-offset: var(--line-thin); }
+
+/* 써 보기 (R02) — 이름표 없이 전체 폭. 처음 크기는 폭의 12%, 행간은 견본 행간 */
+.tester { padding: calc(var(--gap-section) / 2) 0; }
+.tester-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-1);
+  font-size: var(--text-label);
+}
+.tester-group { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+/* 조절 막대 하나 = 이름표 + 막대 + 값. 좁으면 한 줄에 하나씩 */
+.tester-ctl { flex: 1 1 calc(var(--space-3) * 10); display: flex; align-items: center; gap: var(--space-1); }
+.tester-value { min-width: 3.5em; text-align: right; }
+.tester-ctl input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--space-2) * 2);   /* 손가락으로 잡기 쉽게, 보이는 선보다 위아래로 넉넉히 */
+  margin: 0;
+  background: none;
+  appearance: none;
+  cursor: pointer;
+}
+.tester-ctl input::-webkit-slider-runnable-track { height: var(--line-thin); background: var(--line); }
+.tester-ctl input::-moz-range-track { height: var(--line-thin); background: var(--line); }
+/* 손잡이는 속 빈 동그라미(위키 테스터) — 잡는 곳이라는 뜻이 있는 둥근 것 */
+.tester-ctl input::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin-top: calc((var(--line-thin) - var(--space-2)) / 2);
+  border: var(--line-thin) solid var(--ink);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.tester-ctl input::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--space-2);
+  height: var(--space-2);
+  border: var(--line-thin) solid var(--ink);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.tester-icon { display: flex; padding: var(--space-1); color: var(--mute); background: none; border: 0; cursor: pointer; }
+.tester-icon[aria-pressed="true"] { color: var(--ink); }
+.tester-icon svg { width: 1.25em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+.tester-box { margin-top: var(--space-2); }
+/* 색 바꾸기 — 칸 안에서만 두 색을 뒤집고, 흐린 글자·선도 뒤집힌 두 색으로 다시 섞는다 */
+.tester { --t-bg: var(--bg); --t-ink: var(--ink); }
+.tester-box.is-swapped {
+  --bg: var(--t-ink);
+  --ink: var(--t-bg);
+  --mute: color-mix(in srgb, var(--ink) var(--mute-mix), var(--bg));
+  --line: var(--ink);
+  --tint: color-mix(in srgb, var(--ink) 8%, var(--bg));
+  background: var(--bg);
+  color: var(--ink);
+}
+.tester-stage {
+  position: relative;
+  font-family: var(--face-font), var(--font-ui);
+  font-size: var(--spec-tester);
+  line-height: var(--leading-spec);
+  padding: 0 var(--face-pad-r, 0) 0 var(--face-pad-l, 0);
+}
+.tester-mirror, .tester-text {
+  margin: 0;
+  padding: inherit;
+  border: 0;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  font-feature-settings: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.tester-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: transparent;
+  caret-color: var(--ink);
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  outline: none;
+}
+/* 서체에 없는 글자 — 흐린 글자색 */
+.tester-mirror .is-missing { color: var(--mute); }
+
+/* 이름표 단 + 내용 단 (R07) — PC(1100~)는 14단 중 왼쪽 2단이 이름표. 그 아래는 이름표가 내용 위로 */
+.row { padding: calc(var(--gap-section) / 2) 0; }
+.row > .label { margin-bottom: var(--space-1); }
+@media (min-width: 1100px) {
+  .row { display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--space-2); }
+  .row > .label { grid-column: span var(--cols-label); margin: 0; }
+  .row > :not(.label) { grid-column: span calc(var(--cols) - var(--cols-label)); }
+}
+
+/* 서체 정보 — 이름 : 값 */
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 0 var(--space-3); margin: 0; }
+.facts dt { color: var(--mute); }
+.facts dd { margin: 0; }
+
+.note { margin: var(--space-2) 0 0; font-size: var(--text-label); color: var(--mute); }
+.note a { color: var(--ink); text-decoration: underline; text-underline-offset: .2em; }
+a.chip { display: inline-block; }
+
+/* 글리프 표 — 서체 파일에 든 글자만 칸이 생긴다. 칸은 선이 아니라 틈과 옅은 바탕으로 가른다.
+   한 줄 칸 수: PC는 내용 단 수(14 − 2 = 12), 그 아래는 그 절반 */
+.glyphs {
+  --glyph-cols: calc((var(--cols) - var(--cols-label)) / 2);
+  display: grid;
+  grid-template-columns: repeat(var(--glyph-cols), 1fr);
+  gap: var(--space-1);
+}
+@media (min-width: 1100px) { .glyphs { --glyph-cols: calc(var(--cols) - var(--cols-label)); } }
+.glyph {
+  container-type: inline-size;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background: var(--tint);
+  font-family: var(--face-font);
+  line-height: var(--leading-spec);
+  overflow: hidden;
+}
+/* 글자 크기는 칸 폭의 절반 — 칸이 자기 폭을 기준으로 쓰도록 글자는 한 겹 안쪽에 */
+.glyph > span { font-size: 50cqw; }
+.glyph:hover { background: var(--ink); color: var(--bg); }

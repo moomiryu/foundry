@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko" data-face="shoot">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>shoot — 무미류</title>
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="../styles/page.css">
+<style>
+  @font-face { font-family: 'Shoot'; src: url('../fonts/Shoot.otf') format('opentype'); font-display: block; }
+  /* 이 서체의 값 — 색은 tokens.css의 [data-face="shoot"]
+     양옆 여유 = 서체 파일에서 잰 삐침(s 왼쪽 0.136em, t 오른쪽 0.223em). --hero-em = 'shoot' 폭 ÷ 글자 크기(여유 포함) */
+  :root { --face-font: 'Shoot'; --hero-em: 2.68; --face-pad-l: .15em; --face-pad-r: .23em; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="first">
+    <header class="bar">
+      <a class="bar-name" href="https://moomiryu.com">무미류 moomiryu</a>
+      <nav class="bar-links"><a href="#tester">써 보기</a><a href="#info">정보</a><a href="#download">내려받기</a></nav>
+    </header>
+    <!-- 맨 위 그림 (Klim 식). 원본: shoot/shoot bow_closeup_N_purple.png → 웹용 사본 media/bow-N.webp -->
+    <section class="media" aria-label="shoot 사진">
+      <img src="media/bow-1.webp" width="1350" height="1687" alt="활 부품을 가까이 찍은 사진">
+      <img src="media/bow-2.webp" width="1350" height="1687" alt="활 부품을 가까이 찍은 사진" hidden>
+      <img src="media/bow-3.webp" width="1350" height="1687" alt="활 부품을 가까이 찍은 사진" hidden>
+    </section>
+  </div>
+  <section class="hero" aria-label="shoot"><span class="hero-word">shoot</span></section>
+  <!-- data-font-variants: 이미지 그리기용 판(캔버스는 오픈타입 기능을 못 켠다). Shoot-lnum.otf = 숫자 자리에 .lnum 글자를 넣은 판 —
+       서체를 새로 뽑으면 fontTools로 다시 만든다(cmap의 0–9를 GSUB lnum 대체 글자로) -->
+  <section id="tester" class="tester" data-name="shoot" data-font="../fonts/Shoot.otf"
+    data-font-variants='{"lnum": "../fonts/Shoot-lnum.otf"}' data-credit="shoot — 무미류 moomiryu.com">
+    <div class="label">써 보기</div>
+    <button type="button" data-sample="shoot the night">짧게</button>
+    <button type="button" data-sample="the quick brown fox jumps over the lazy dog">팬그램</button>
+    <button type="button" data-sample="0123456789">숫자</button>
+  </section>
+  <section id="info" class="row">
+    <div class="label">서체 정보</div>
+    <dl class="facts">
+      <dt>이름</dt><dd>shoot</dd>
+      <dt>쓰임</dt><dd>졸업전시 아이덴티티 서체</dd>
+      <dt>만든 이</dt><dd>류주성 (무미류)</dd>
+      <dt>해</dt><dd>2026</dd>
+      <dt>글자</dt><dd><span data-fill="chars"></span>자</dd>
+      <dt>오픈타입 기능</dt><dd data-fill="features"></dd>
+      <dt>형식 · 판</dt><dd>OTF · 1.000 (데모)</dd>
+    </dl>
+  </section>
+  <section id="download" class="row">
+    <div class="label">내려받기</div>
+    <div>
+      <a class="chip is-primary" href="../fonts/shoot-demo.zip" download>shoot 데모 내려받기</a>
+      <p class="note">OTF · 라이선스 문서 포함. 개인적인 작업에는 무료, 상업적으로 쓰려면 먼저 문의해 주세요 — <a href="mailto:moomiryu@gmail.com">moomiryu@gmail.com</a><br>
+      <a href="../fonts/Shoot-LICENSE.txt">라이선스 전문 보기</a></p>
+    </div>
+  </section>
+  <section id="glyphs" class="row">
+    <div class="label">글리프 표</div>
+    <div class="glyphs" data-fill="glyphs"></div>
+  </section>
+</div>
+<script src="../scripts/tester.js"></script>
+<script>
+  // 맨 위 그림: 여러 장을 번갈아 — 움직이는 그림처럼. 움직임을 줄여 둔 기기에서는 첫 장만
+  // ponytail: 서체 페이지가 하나라 여기 둔다. 둘째 서체 페이지가 생기면 공용 파일로
+  const shots = document.querySelectorAll('.media img');
+  if (shots.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let i = 0;
+    setInterval(() => { shots[i].hidden = true; i = (i + 1) % shots.length; shots[i].hidden = false; }, 1500);
+  }
+</script>
+</body>
+</html>
