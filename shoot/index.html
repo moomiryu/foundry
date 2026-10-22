@@ -38,6 +38,11 @@
     <button type="button" data-sample="the quick brown fox jumps over the lazy dog">팬그램</button>
     <button type="button" data-sample="0123456789">숫자</button>
   </section>
+  <!-- 적용 사례 — 정보 사이사이에, 화면 끝까지 짙은 띠(--ground) 위 가운데. 원본: shoot/shoot_*_1080x1440.* → 웹용 사본 media/
+       (영상은 소리를 뺐다. 그림 속 회색 둘레는 띠 색으로 바꿨다 — 포스터 바깥만, 밝기 비율 그대로라 그림자는 남는다) -->
+  <figure class="band">
+    <video src="media/motion-poster.mp4" width="1080" height="1440" autoplay muted loop playsinline aria-label="shoot을 쓴 졸업전시 모션 포스터"></video>
+  </figure>
   <section id="info" class="row">
     <div class="label">서체 정보</div>
     <dl class="facts">
@@ -50,6 +55,10 @@
       <dt>형식 · 판</dt><dd>OTF · 1.000 (데모)</dd>
     </dl>
   </section>
+  <figure class="band">
+    <img src="media/poster-white.webp" width="1080" height="1440" loading="lazy" alt="shoot을 쓴 졸업전시 포스터, 흰 판">
+    <img src="media/poster-purple.webp" width="1080" height="1440" loading="lazy" alt="shoot을 쓴 졸업전시 포스터, 보라 판">
+  </figure>
   <section id="download" class="row">
     <div class="label">내려받기</div>
     <div>
@@ -71,6 +80,10 @@
   if (shots.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let i = 0;
     setInterval(() => { shots[i].hidden = true; i = (i + 1) % shots.length; shots[i].hidden = false; }, 1500);
+  }
+  // 모션 포스터도 움직임을 줄여 둔 기기에서는 멈추고, 직접 틀 수 있게 재생 단추를 보인다
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.band video').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); v.controls = true; });
   }
 </script>
 </body>

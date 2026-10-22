@@ -33,8 +33,12 @@ a { color: inherit; text-decoration: none; }
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  --fade: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
-          linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  --fade-in: 12%;
+}
+/* 그림 가장자리를 바탕에 녹인다 — 녹이는 너비만 자리마다(--fade-in) */
+:is(.media img, .band > *) {
+  --fade: linear-gradient(to right, transparent, #000 var(--fade-in), #000 calc(100% - var(--fade-in)), transparent),
+          linear-gradient(to bottom, transparent, #000 var(--fade-in), #000 calc(100% - var(--fade-in)), transparent);
   -webkit-mask-image: var(--fade);
   -webkit-mask-composite: source-in;
   mask-image: var(--fade);
@@ -181,6 +185,21 @@ a { color: inherit; text-decoration: none; }
   .row > .label { grid-column: span var(--cols-label); margin: 0; }
   .row > :not(.label) { grid-column: span calc(var(--cols) - var(--cols-label)); }
 }
+
+/* 적용 사례 — 정보 사이사이에 포스터·영상. 가장자리 여백까지 짙은 띠(--ground)로 채워 트이게, 가운데에.
+   자르지 않고 한 화면 높이까지. 둘이면 나란히 반씩 — 둘 사이는 그림 속 테두리가 맡는다 */
+.band {
+  display: flex;
+  justify-content: center;
+  margin: calc(var(--gap-section) / 2) calc(var(--edge) * -1);
+  padding: var(--edge);
+  background: var(--ground);
+}
+.band > * {
+  display: block; min-width: 0; width: auto; height: auto; max-width: 100%; max-height: calc(100svh - var(--edge) * 2);
+  --fade-in: 2%;   /* 그림 속 테두리 안에서만 — 포스터와 그림자는 건드리지 않는다 */
+}
+.band > :not(:only-child) { max-width: 50%; }
 
 /* 서체 정보 — 이름 : 값 */
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: 0 var(--space-3); margin: 0; }
