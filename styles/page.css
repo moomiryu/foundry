@@ -139,12 +139,14 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   font-family: var(--face-font), var(--font-ui);
   font-size: var(--spec-tester);
-  line-height: var(--leading-spec);
-  padding: 0 var(--face-pad-r, 0) 0 var(--face-pad-l, 0);
+  --lh: var(--leading-spec);
+  line-height: var(--lh);
+  /* 행간을 글자 높이(--face-ink)보다 줄이면 넘치는 만큼 위아래를 비운다 — 글자가 조절판을 덮지 않게 */
+  --pad-y: max(0em, (var(--face-ink, 0) - var(--lh)) * .5em);
+  padding: var(--pad-y) var(--face-pad-r, 0) var(--pad-y) var(--face-pad-l, 0);
 }
 .tester-mirror, .tester-text {
   margin: 0;
-  padding: inherit;
   border: 0;
   font: inherit;
   line-height: inherit;
@@ -154,7 +156,9 @@ a { color: inherit; text-decoration: none; }
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* 거울은 칸 안쪽에 놓이니 여유를 이미 받았다. 위에 덮인 입력칸만 칸 끝에서 시작하므로 여유를 물려받는다 */
 .tester-text {
+  padding: inherit;
   position: absolute;
   inset: 0;
   width: 100%;

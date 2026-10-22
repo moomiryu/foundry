@@ -9,8 +9,9 @@
 <style>
   @font-face { font-family: 'Shoot'; src: url('../fonts/Shoot.otf') format('opentype'); font-display: block; }
   /* 이 서체의 값 — 색은 tokens.css의 [data-face="shoot"]
-     양옆 여유 = 서체 파일에서 잰 삐침(s 왼쪽 0.136em, t 오른쪽 0.223em). --hero-em = 'shoot' 폭 ÷ 글자 크기(여유 포함) */
-  :root { --face-font: 'Shoot'; --hero-em: 2.68; --face-pad-l: .15em; --face-pad-r: .23em; }
+     양옆 여유 = 서체 파일에서 잰 삐침(s 왼쪽 0.136em, t 오른쪽 0.223em). --hero-em = 'shoot' 폭 ÷ 글자 크기(여유 포함)
+     --face-ink = 글자 위아래 높이(head yMin–yMax −450~450 ÷ 1000) — 써 보기 행간을 이보다 줄이면 칸 위아래를 그만큼 비운다 */
+  :root { --face-font: 'Shoot'; --hero-em: 2.68; --face-pad-l: .15em; --face-pad-r: .23em; --face-ink: .9; }
 </style>
 </head>
 <body>

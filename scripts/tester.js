@@ -68,7 +68,7 @@ const featureName = (tag) => FEATURES[tag] || (/^ss\d\d$/.test(tag) ? '스타일
 // 조절 막대. 자간은 일러스트레이터처럼 1/1000em
 const SLIDERS = [
   { label: '크기', min: 8, max: 400, step: 1, show: (v) => Math.round(v), css: (s, v) => { s.fontSize = v + 'px'; } },
-  { label: '행간', min: 0.5, max: 3, step: 0.05, show: (v) => (+v).toFixed(2), css: (s, v) => { s.lineHeight = v; } },
+  { label: '행간', min: 0.5, max: 3, step: 0.05, show: (v) => (+v).toFixed(2), css: (s, v) => { s.setProperty('--lh', v); } },
   { label: '자간', min: -100, max: 300, step: 5, show: (v) => String(Math.round(v)), css: (s, v) => { s.letterSpacing = v / 1000 + 'em'; } },
 ];
 // 정렬 아이콘: 세 줄의 [시작, 끝] x좌표
