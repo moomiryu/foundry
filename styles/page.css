@@ -62,8 +62,10 @@ a { color: inherit; text-decoration: none; }
   padding: 0 var(--face-pad-r, 0) 0 var(--face-pad-l, 0);
 }
 
-/* 이름표 — 흐린 글자, 이름표 크기 */
-.label { font-size: var(--text-label); color: var(--mute); }
+/* 제목 — 구간 이름(써 보기·서체 정보·내려받기·글리프 표). 견본 다음으로 큰 글, 글자색 */
+.title { margin: 0 0 var(--space-2); font-size: var(--text-title); line-height: var(--leading-big); font-weight: var(--weight-title); }
+/* 부제목(항목 이름) — 크기·행간·자간, 이름·쓰임… 값과 같은 크기, 흐린 글자로만 가른다 */
+.label { color: var(--mute); }
 
 /* 누르는 것 — 글자와 선으로. 켜진 것은 두 색을 뒤집는다 */
 .chip {
@@ -88,7 +90,6 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: var(--space-1) var(--space-3);
   margin-top: var(--space-1);
-  font-size: var(--text-label);
 }
 .tester-group { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 /* 조절 막대 하나 = 이름표 + 막대 + 값. 좁으면 한 줄에 하나씩 */
@@ -179,11 +180,17 @@ a { color: inherit; text-decoration: none; }
 
 /* 이름표 단 + 내용 단 (R07) — PC(1100~)는 14단 중 왼쪽 2단이 이름표. 그 아래는 이름표가 내용 위로 */
 .row { padding: calc(var(--gap-section) / 2) 0; }
-.row > .label { margin-bottom: var(--space-1); }
 @media (min-width: 1100px) {
   .row { display: grid; grid-template-columns: repeat(var(--cols), 1fr); column-gap: var(--space-2); }
-  .row > .label { grid-column: span var(--cols-label); margin: 0; }
-  .row > :not(.label) { grid-column: span calc(var(--cols) - var(--cols-label)); }
+  .row > .title { grid-column: span var(--cols-label); margin: 0; }
+  .row > :not(.title) { grid-column: span calc(var(--cols) - var(--cols-label)); }
+}
+
+/* 서체 설명 — 맨 위 견본 바로 아래(위 여백은 견본이 이미 가졌다). 큰 글, PC는 내용 단의 2/3 폭 */
+.intro { padding-top: 0; }
+.intro p { margin: 0; font-size: var(--text-big); line-height: var(--leading-big); }
+@media (min-width: 1100px) {
+  .row.intro > p { grid-column: calc(var(--cols-label) + 1) / span calc((var(--cols) - var(--cols-label)) * 2 / 3); }
 }
 
 /* 적용 사례 — 정보 사이사이에 포스터·영상. 가장자리 여백까지 짙은 띠(--ground)로 채워 트이게, 가운데에.

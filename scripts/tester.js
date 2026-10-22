@@ -73,10 +73,6 @@ const SLIDERS = [
 ];
 // 정렬 아이콘: 세 줄의 [시작, 끝] x좌표
 const ALIGNS = [['left', '왼쪽 정렬', '0 16 0 10 0 13'], ['center', '가운데 정렬', '0 16 3 13 1.5 14.5'], ['right', '오른쪽 정렬', '0 16 6 16 3 16']];
-// 이미지 비율 — 폭 1080, 높이. 3:4는 2025년부터 인스타 피드 기본
-const RATIOS = [['9:16', 1920], ['3:4', 1440], ['4:5', 1350], ['1:1', 1080]];
-const IMAGE_W = 1080;
-const PHONE_W = 390;   // 인스타그램은 폰에서 보니, 이미지 여백·글자는 폰 화면 비율로 키운다
 
 async function initTester(sec) {
   const buf = await fetch(sec.dataset.font).then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status)));
@@ -108,12 +104,7 @@ async function initTester(sec) {
     <div class="tester-box"><div class="tester-stage">
       <div class="tester-mirror" aria-hidden="true"></div>
       <textarea class="tester-text" rows="1" spellcheck="false" aria-label="써 보기"></textarea>
-    </div></div>
-    <div class="tester-bar">
-      <span class="label">이미지로 내려받기</span>
-      <div class="tester-group" role="group" aria-label="이미지 비율">${RATIOS.map(([r], i) => `<button type="button" class="chip" data-ratio="${i}">${r}</button>`).join('')}</div>
-      <button type="button" class="chip is-primary" data-export>내려받기</button>
-    </div>`;
+    </div></div>`;
   sec.append(...box.children);
 
   const stage = sec.querySelector('.tester-stage');
@@ -217,117 +208,6 @@ async function initTester(sec) {
     }));
   });
   document.querySelectorAll('[data-fill="features"]').forEach((el) => { el.textContent = feats.map((f) => `${featureName(f)}(${f})`).join(' · ') || '없음'; });
-
-  // ── 이미지로 내려받기 ──
-  const ratioBtns = [...sec.querySelectorAll('[data-ratio]')];
-  let ratio = 1;
-  const pickRatio = (i) => { ratio = i; press(ratioBtns, (b) => +b.dataset.ratio === i); };
-  ratioBtns.forEach((b) => b.addEventListener('click', () => pickRatio(+b.dataset.ratio)));
-  pickRatio(1);
-
-  // 캔버스는 오픈타입 기능을 못 켠다 → 기능을 미리 적용한 판(data-font-variants)으로 그린다.
-  // ponytail: 판은 기능 하나씩만. 기능을 둘 넘게 켜는 서체가 오면 조합한 판을 만든다
-  const variants = JSON.parse(sec.dataset.fontVariants || '{}');
-  const loaded = {};
-  const variantFamily = async () => {
-    const f = feats.find((x) => on[x] && !ON_AT_START.has(x) && variants[x]);
-    if (!f) return getComputedStyle(stage).fontFamily;
-    loaded[f] ??= new FontFace('tester-' + f, `url(${new URL(variants[f], location.href)})`).load().then((ff) => document.fonts.add(ff));
-    await loaded[f];
-    return `"tester-${f}", ${getComputedStyle(stage).fontFamily}`;
-  };
-
-  const drawImage = async (W, H) => {
-    const box = sec.querySelector('.tester-box'), ss = getComputedStyle(stage), root = getComputedStyle(document.documentElement);
-    // 색: 써 보기 칸의 두 색(색 바꾸기 반영)과 흐린 글자색을 캔버스가 읽는 rgb로
-    const probe = box.appendChild(document.createElement('span'));
-    const col = (name) => {
-      probe.style.color = `var(${name})`;
-      const c = getComputedStyle(probe).color, n = c.match(/[\d.]+/g).slice(0, 3).map(Number);
-      return `rgb(${(c.startsWith('color(') ? n.map((x) => x * 255) : n).join()})`;
-    };
-    const [bg, ink, mute] = ['--bg', '--ink', '--mute'].map(col);
-    probe.remove();
-
-    const k0 = W / PHONE_W;
-    const m = parseFloat(root.getPropertyValue('--space-3')) * k0;         // 가장자리
-    const capSize = parseFloat(root.getPropertyValue('--text-s')) * k0;    // 아래 한 줄 = 폰 본문 크기
-    const k = (W - 2 * m) / stage.clientWidth;                            // 써 보기 칸 → 이미지
-    const pl = parseFloat(ss.paddingLeft) * k, pr = parseFloat(ss.paddingRight) * k;
-    let fs = parseFloat(ss.fontSize) * k;
-    const lead = parseFloat(ss.lineHeight) / parseFloat(ss.fontSize);
-    const track = (parseFloat(ss.letterSpacing) || 0) / parseFloat(ss.fontSize);
-    const family = await variantFamily();
-    await document.fonts.load(`${capSize}px "SUIT Variable"`);
-
-    const cv = Object.assign(document.createElement('canvas'), { width: W, height: H });
-    const ctx = cv.getContext('2d');
-    if ('fontKerning' in ctx) ctx.fontKerning = on.kern === false ? 'none' : 'normal';
-    const maxW = W - 2 * m - pl - pr;
-    const capGap = capSize * 2;
-    const avail = H - 2 * m - capSize - capGap;
-
-    // 줄 나누기: 낱말 단위, 한 낱말이 넘치면 글자 단위. 자간은 글자마다 더한다
-    const width = (s) => ctx.measureText(s).width + fs * track * Math.max(0, [...s].length - 1);
-    const layout = () => {
-      ctx.font = `${fs}px ${family}`;
-      const lines = [];
-      for (const para of text.value.split('\n')) {
-        let line = '';
-        for (const word of para.split(/(\s+)/)) {
-          if (width(line + word) <= maxW) { line += word; continue; }
-          if (line.trim()) { lines.push(line.trimEnd()); line = ''; }
-          for (const ch of word.trimStart()) {
-            if (line && width(line + ch) > maxW) { lines.push(line); line = ''; }
-            line += ch;
-          }
-        }
-        lines.push(line);
-      }
-      return lines;
-    };
-    let lines = layout();
-    // 이미지보다 길면 잘리지 않게 줄인다
-    for (let i = 0; i < 6 && lines.length * fs * lead > avail; i++) { fs *= Math.sqrt(avail / (lines.length * fs * lead)); lines = layout(); }
-
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    // 기준선은 화면(CSS)처럼: 줄 높이에서 서체의 위아래 높이를 뺀 나머지를 반씩 — 다른 글꼴로 그린 글자도 같은 기준선에
-    ctx.textBaseline = 'alphabetic';
-    const fm = ctx.measureText('H'), asc = fm.fontBoundingBoxAscent, desc = fm.fontBoundingBoxDescent;
-    const lh = fs * lead, top = m + Math.max(0, (avail - lines.length * lh) / 2);
-    const to = stage.style.textAlign || 'left';
-    lines.forEach((line, i) => {
-      const lw = width(line);
-      const x0 = m + pl + (to === 'center' ? (maxW - lw) / 2 : to === 'right' ? maxW - lw : 0);
-      const chars = [...line];
-      chars.forEach((ch, j) => {
-        ctx.fillStyle = has(ch) ? ink : mute;
-        ctx.fillText(ch, x0 + ctx.measureText(chars.slice(0, j).join('')).width + fs * track * j, top + lh * i + (lh - asc - desc) / 2 + asc);
-      });
-    });
-    // 아래 한 줄 — 이름을 기억하게
-    ctx.font = `${capSize}px "SUIT Variable", sans-serif`;
-    ctx.fillStyle = mute;
-    ctx.fillText(sec.dataset.credit || '', m, H - m);
-    return cv;
-  };
-
-  // 폰은 공유 창(사진첩에 저장), PC는 파일로
-  const save = (cv, name) => cv.toBlob(async (blob) => {
-    const file = new File([blob], name, { type: 'image/png' });
-    if (matchMedia('(pointer: coarse)').matches && navigator.canShare?.({ files: [file] })) {
-      return navigator.share({ files: [file] }).catch(() => {});
-    }
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name });
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  }, 'image/png');
-
-  sec.querySelector('[data-export]').addEventListener('click', async () => {
-    const [name, H] = RATIOS[ratio];
-    save(await drawImage(IMAGE_W, H), `${sec.dataset.name || 'type'}-${name.replace(':', 'x')}.png`);
-  });
 }
 
 document.querySelectorAll('.tester[data-font]').forEach((sec) => initTester(sec).catch(() => {})); // 서체 파일을 못 읽으면 조절판을 안 띄운다

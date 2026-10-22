@@ -29,11 +29,12 @@
     </section>
   </div>
   <section class="hero" aria-label="shoot"><span class="hero-word">shoot</span></section>
-  <!-- data-font-variants: 이미지 그리기용 판(캔버스는 오픈타입 기능을 못 켠다). Shoot-lnum.otf = 숫자 자리에 .lnum 글자를 넣은 판 —
-       서체를 새로 뽑으면 fontTools로 다시 만든다(cmap의 0–9를 GSUB lnum 대체 글자로) -->
-  <section id="tester" class="tester" data-name="shoot" data-font="../fonts/Shoot.otf"
-    data-font-variants='{"lnum": "../fonts/Shoot-lnum.otf"}' data-credit="shoot — 무미류 moomiryu.com">
-    <div class="label">써 보기</div>
+  <!-- 서체 설명 — 지금은 자리 글(lorem ipsum). 글은 사용자가 준다 -->
+  <section class="row intro" aria-label="shoot 소개">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+  </section>
+  <section id="tester" class="tester" data-font="../fonts/Shoot.otf">
+    <h2 class="title">써 보기</h2>
     <button type="button" data-sample="shoot the night">짧게</button>
     <button type="button" data-sample="the quick brown fox jumps over the lazy dog">팬그램</button>
     <button type="button" data-sample="0123456789">숫자</button>
@@ -44,7 +45,7 @@
     <video src="media/motion-poster.mp4" width="1080" height="1440" autoplay muted loop playsinline aria-label="shoot을 쓴 졸업전시 모션 포스터"></video>
   </figure>
   <section id="info" class="row">
-    <div class="label">서체 정보</div>
+    <h2 class="title">서체 정보</h2>
     <dl class="facts">
       <dt>이름</dt><dd>shoot</dd>
       <dt>쓰임</dt><dd>졸업전시 아이덴티티 서체</dd>
@@ -60,7 +61,7 @@
     <img src="media/poster-purple.webp" width="1080" height="1440" loading="lazy" alt="shoot을 쓴 졸업전시 포스터, 보라 판">
   </figure>
   <section id="download" class="row">
-    <div class="label">내려받기</div>
+    <h2 class="title">내려받기</h2>
     <div>
       <a class="chip is-primary" href="../fonts/shoot-demo.zip" download>shoot 데모 내려받기</a>
       <p class="note">OTF · 라이선스 문서 포함. 개인적인 작업에는 무료, 상업적으로 쓰려면 먼저 문의해 주세요 — <a href="mailto:moomiryu@gmail.com">moomiryu@gmail.com</a><br>
@@ -68,7 +69,7 @@
     </div>
   </section>
   <section id="glyphs" class="row">
-    <div class="label">글리프 표</div>
+    <h2 class="title">글리프 표</h2>
     <div class="glyphs" data-fill="glyphs"></div>
   </section>
 </div>
